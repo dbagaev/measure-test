@@ -28,18 +28,18 @@ class SimpleTest:
     def findTests(cls):
         return [cls("Case_000"), cls("Case_001"), cls("Case_002")]
 
-    @TestMetric
+    @TestMetric(type=TestMetric.TYPE_INTEGER)
     def Size(self):
         return self._Size
 
-    @TestMetric
+    @TestMetric(type=TestMetric.TYPE_FLOAT)
     def Value(self):
         return self._Value
 
-    @TestMetric
+    @TestMetric(type=TestMetric.TYPE_BOOLEAN)
     def Is(self):
         return self._Is
 
-    @TestMetric
+    @TestMetric(type=TestMetric.TYPE_STRING)
     def Message(self):
         return self._Message
