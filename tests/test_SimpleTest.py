@@ -1,4 +1,4 @@
-from ..MeasuredTest  import MeasuredTest
+from ..Experiment  import Experiment
 import unittest
 
 
@@ -6,6 +6,6 @@ import unittest
 
 class TestSimpleTest(unittest.TestCase):
     def test_basic(self):
-        for t in MeasuredTest.All:
+        for t in Experiment.All:
             if t.typeName == 'SimpleTest':
                 self.assertEquals(len(t.metrics()), 4)

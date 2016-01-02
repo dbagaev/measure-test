@@ -1,9 +1,9 @@
 from random import random
 
-from ..MeasuredTest import MeasuredTest
+from ..Experiment import Experiment
 from ..TestMetric import TestMetric
 
-@MeasuredTest
+@Experiment
 class SimpleTest:
     def __init__(self, name=None):
         self.data = ""

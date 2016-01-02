@@ -2,12 +2,12 @@ import inspect
 
 from .TestMetric import TestMetric
 
-class MeasuredTest :
+class Experiment :
     All = {}
 
     def __init__(self, obj) :
         self.obj = obj        
-        MeasuredTest.All[obj] = self
+        Experiment.All[obj] = self
         print("Registreing test: " + self.testType())
 
     def findTests(self) :
