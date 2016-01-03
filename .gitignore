@@ -1,3 +1,4 @@
 *.sln
 *.pyproj
 __pycache__
+*.pyc
