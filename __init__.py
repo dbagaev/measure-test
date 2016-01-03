@@ -1,6 +1,6 @@
-__all__ = ['MeasuredTest', 'TestMetric']
+__all__ = ['Experiment', 'Metric', 'Runner', 'tests']
 
 if __name__ == '__main__':
     import unittest
-    from MeasureTest.test import *
+    from pyxperiment.test import *
     unittest.main()

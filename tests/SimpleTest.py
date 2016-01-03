@@ -1,13 +1,13 @@
 from random import random
 
-from ..Experiment import Experiment
-from ..TestMetric import TestMetric
+from pyxperiment.experiment import Experiment
+from pyxperiment.metric import Metric
 
 @Experiment
 class SimpleTest:
-    def __init__(self, name=None):
+    def __init__(self, name = ""):
         self.data = ""
-        self.name = name
+        self._Name = name
 
         self._Size = 0
         self._Value = 0.1
@@ -28,18 +28,18 @@ class SimpleTest:
     def findTests(cls):
         return [cls("Case_000"), cls("Case_001"), cls("Case_002")]
 
-    @TestMetric(type=TestMetric.TYPE_INTEGER)
+    @Metric(type=Metric.TYPE_INTEGER)
     def Size(self):
         return self._Size
 
-    @TestMetric(type=TestMetric.TYPE_FLOAT)
+    @Metric(type=Metric.TYPE_FLOAT)
     def Value(self):
         return self._Value
 
-    @TestMetric(type=TestMetric.TYPE_BOOLEAN)
+    @Metric(type=Metric.TYPE_BOOLEAN)
     def Is(self):
         return self._Is
 
-    @TestMetric(type=TestMetric.TYPE_STRING)
+    @Metric(type=Metric.TYPE_STRING)
     def Message(self):
         return self._Message
