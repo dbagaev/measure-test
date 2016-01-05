@@ -12,30 +12,53 @@ class Metric :
     TYPE_STRING = 3
     TYPE_FILE = 4
 
-    def __init__(self, obj=None, type=TYPE_UNKNOWN, accumulator=None) :
+    def __init__(self, obj=None, name=None, type=TYPE_UNKNOWN, accumulator=None) :
+        self.__name__ = None
         if obj != None :
+            self.__name__ = obj.__name__
             self._func = obj
-            self._Name = obj.__name__
-            print("registering attribute %s" % self._Name)
+            if obj is not Metric :
+                self._Name = obj.__name__
         else:
             self._func = None
             self._Name = "<Unknown>"
+            self._Name = name
 
         self._Type = type
         self._Accumulator = accumulator
+        if name is not None :
+            self._Name = name
+            self.__name__ = name
+
+        self._Self = None
+
+        self._ChildMetrics = [self]
+
+        if obj is not None :
+            print("registered attribute %s" % self._Name)
 
     def __call__(self, obj = None) :
-        # print("Attribute called " + self._Name)
-        if obj != None :
-            if self._func == None:
+        if obj is not None :
+            if self._func is None:
                 self._func = obj
-                self._Name = obj.__name__
-                print("registering attribute %s" % self._Name)
+                if self._Name is None :
+                    self._Name = obj.__name__
+                print("registered attribute %s" % self._Name)
+                if self.__name__ is None :
+                    self.__name__ = obj.__name__
+                if isinstance(obj, Metric) :
+                    self._ChildMetrics.append(obj)
                 return self
             else:
                 return self._func(obj)
         else :
-            return self
+            if self._Self is None :
+                return self
+            else :
+                return self._func(self._Self)
+
+    def getChildMetrics(self):
+        return self._ChildMetrics
 
     @property
     def Name(self) :
@@ -45,6 +68,3 @@ class Metric :
     def Type(self):
         return self._Type
 
-
-#class TestLocator :
-#    def __init__(self, obj)

@@ -4,19 +4,33 @@ import inspect
 
 
 class Experiment :
-    def __init__(self, obj, name = None) :
+    def __init__(self, obj) :
+        # This part creates new experiment as class decorator. In this case we have to register this class in the registry
         if inspect.isclass(obj):
             self._Class = obj
+            self._Test = None
             self._Name = obj.__name__
             Registry.register(self)
-        else:
+        # This means that we instantiate experiment to run experiment passed
+        elif obj is not None :
             self._Class = obj.__class__
-            self.obj = obj
-            self._Name = name
+            self._Test = obj
+
+            for mm in inspect.getmembers(obj) :
+                if isinstance(mm[1], Metric) :
+                    for m in mm[1].getChildMetrics() :
+                        m._Self = obj
+
+            self._Name = obj.Name
+        else :
+            raise Exception("Passing empty object to Experiment")
 
     @property
     def Name(self):
-        return self._Name
+        if self._Test is not None :
+            return self._Test.Name
+        else :
+            return None
 
     def findTests(self) :
         print("Getting test list for " + self.testType())
@@ -26,51 +40,90 @@ class Experiment :
             print("Exception while locating tests: " + e)
             return []
 
+    @property
     def testType(self) :
         return self._Class.__name__
 
-    def Metrics(self, obj = None) :
-        if obj == None :
-            tmp = self._Class()
+    def Metrics(self) :
+        if self._Test is not None :
+            tmp = self._Test
         else :
-            tmp = obj
+            tmp = self._Class()
 
-        for m in inspect.getmembers(tmp) :
-            if isinstance(m[1], Metric) :
-                yield m[1]
+        for mm in inspect.getmembers(tmp) :
+            if isinstance(mm[1], Metric) :
+                for m in mm[1].getChildMetrics() :
+                    if m._Accumulator is None :
+                        yield (m.Name, m)
 
-    def __call__(self, obj = None) :
-        if obj == None :
+    def __call__(self) :
+        if self._Test == None :
             return self
 
-        obj.test()
+        return self.run()
 
-        result = []
 
-        for m in self.metrics(obj) :
-            result.append((m.Name, m(obj), m))
-
-        return result
+    def run(self) :
+        self._Test.test()
 
 '''
 '''
 class ExperimentSet:
 
     def __init__(self, exp):
-        self._Experiment = exp
+        self._ExperimentClass = exp._Class
+
+        self._Metrics = {}
+        if exp._Test is not None :
+            tmp = exp._Test
+        else :
+            tmp = exp._Class()
+
+        for m in inspect.getmembers(tmp) :
+            if isinstance(m[1], Metric) :
+                for mm in m[1].getChildMetrics() :
+                    if mm._Accumulator != None:
+                        self._Metrics[mm.Name] = mm._Accumulator(mm)
+
+        self._Experiments = []
+
+
+    def addExperiment(self, experiment):
+        if experiment._Class != self._ExperimentClass :
+            return
+
+        if experiment._Test is None :
+            return
+
+        self._Experiments.append(experiment)
+
+        for m in inspect.getmembers(experiment._Test) :
+            if isinstance(m[1], Metric) :
+                for mm in m[1].getChildMetrics() :
+                    if mm._Accumulator != None:
+                        self._Metrics[mm.Name].add(mm)
+
 
     def Experiments(self):
         """Return experiments included this experiment set"""
-        for t in self._Experiment.findTests():
+        for t in self._Experiments:
+            yield t
+
+    def findExperiments(self):
+        for t in self._ExperimentClass.findTests():
             yield Experiment(t)
 
     def Metrics(self):
         """Returns set metrics, e.g. metrics which have accumulators thus they are calculated entirely for the whole set"""
-        tmp = self._Experiment._Class()
+        for m in  self._Metrics.items() :
+            yield m
 
-        for m in inspect.getmembers(tmp) :
-            if isinstance(m[1], Metric) and m[1]._Accumulator != None:
-                yield m[1]
+    def run(self):
+        for exp in self._Experiments :
+            exp.run()
 
+    @property
+    def Name(self):
+        return self._ExperimentClass.__name__
 
 from .registry import Registry

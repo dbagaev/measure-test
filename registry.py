@@ -22,9 +22,9 @@ class Registry:
 
     @staticmethod
     def register(experiment):
-        print("Registreing test: " + experiment.Name)
+        print("Registreing test: " + experiment.testType)
         reg = Registry.getInstance()
-        reg._ExperimentSets[experiment.Name] = ExperimentSet(experiment)
+        reg._ExperimentSets[experiment.testType] = ExperimentSet(experiment)
 
     @staticmethod
     def unregister(experiment):
@@ -32,7 +32,7 @@ class Registry:
 
     @staticmethod
     def get(name):
-        if name in Registry.getInstance()._ExperimentSets:
+        if name in Registry.getInstance()._ExperimentSets.keys() :
             return Registry.getInstance()._ExperimentSets[name]
         else:
             return None

@@ -13,15 +13,15 @@ class TestSimpleTest(unittest.TestCase):
         self.assertIsNotNone(simple_test, "Experiment can't be located")
 
         metrics = list(simple_test.Metrics())
-        self.assertEqual(len(metrics), 0)
+        self.assertEqual(len(metrics), 2)
 
-        cases = list(simple_test.Experiments())
+        cases = list(simple_test.findExperiments())
         self.assertEqual(len(cases), 3)
         simple_test = cases[0]
 
         metrics = {}
         for m in simple_test.Metrics():
-            metrics[m.Name] = m
+            metrics[m[0]] = m[1]
         self.assertEqual(len(metrics), 4)
 
         self.assertIn('Is', metrics)

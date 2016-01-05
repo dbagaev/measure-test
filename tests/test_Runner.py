@@ -16,4 +16,15 @@ class test_Runner(unittest.TestCase) :
 
         runner = Runner()
         runner.add(simple_test)
-        runner.run()
+        result = runner.run()
+
+        self.assertEquals(len(result.SetResults), 1)
+
+        set_results = result.SetResults['SimpleTest']
+        self.assertEquals(len(set_results.ExperimentResults), 3)
+
+        for m in set_results.Metrics :
+            if m[0] == 'TotalSize' :
+                self.assertEquals(m[1](), 126)
+            elif m[1] == 'AvgVaue' :
+                self.assertLessEqual(m[1](), 1.)
