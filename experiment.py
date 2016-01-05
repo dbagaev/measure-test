@@ -44,7 +44,7 @@ class Experiment :
     def testType(self) :
         return self._Class.__name__
 
-    def Metrics(self) :
+    def Metrics(self, filter = True) :
         if self._Test is not None :
             tmp = self._Test
         else :
@@ -53,7 +53,7 @@ class Experiment :
         for mm in inspect.getmembers(tmp) :
             if isinstance(mm[1], Metric) :
                 for m in mm[1].getChildMetrics() :
-                    if m._Accumulator is None :
+                    if not filter and m._Accumulator is None :
                         yield (m.Name, m)
 
     def __call__(self) :
@@ -117,6 +117,15 @@ class ExperimentSet:
         """Returns set metrics, e.g. metrics which have accumulators thus they are calculated entirely for the whole set"""
         for m in  self._Metrics.items() :
             yield m
+
+    def AllMetrics(self):
+        tmp = self._ExperimentClass()
+
+        for m in inspect.getmembers(tmp) :
+            if isinstance(m[1], Metric) :
+                for mm in m[1].getChildMetrics() :
+                    yield ( mm.Name, mm )
+
 
     def run(self):
         for exp in self._Experiments :
