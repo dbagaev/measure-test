@@ -48,6 +48,8 @@ class Metric :
                     self.__name__ = obj.__name__
                 if isinstance(obj, Metric) :
                     self._ChildMetrics.append(obj)
+                    if self._Type == Metric.TYPE_UNKNOWN :
+                        self._Type = obj.Type
                 return self
             else:
                 return self._func(obj)

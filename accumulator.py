@@ -2,13 +2,22 @@ from .metric import Metric
 
 class MetricAccumulator:
     def __init__(self, metric) :
-        self._Type = metric._Type
+        self._Type = metric.Type
+        self._Name = metric.Name
         self._Metrics = []
 
     def add(self, metric) :
         if metric._Type != self._Type :
             return
         self._Metrics.append(metric)
+
+    @property
+    def Type(self) :
+        return self._Type
+
+    @property
+    def Name(self) :
+        return self._Name
 
 
 class Average(MetricAccumulator) :
