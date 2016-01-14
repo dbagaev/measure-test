@@ -1,4 +1,4 @@
-from .experiment import ExperimentSet
+
 
 class Registry:
 
@@ -36,3 +36,18 @@ class Registry:
             return Registry.getInstance()._ExperimentSets[name]
         else:
             return None
+
+
+class ExperimentRegistrator(type) :
+    def __init__(cls, name, bases, attrs) :
+        from .experiment import Experiment
+        try :
+            if Experiment not in bases :
+                return
+        except :
+            return
+
+        Registry.register(cls)
+
+
+

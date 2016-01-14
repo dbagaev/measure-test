@@ -5,8 +5,7 @@ from pyxperiment.metric import Metric
 
 from pyxperiment import accumulator
 
-@Experiment
-class SimpleTest:
+class SimpleTest(Experiment):
     def __init__(self, name = ""):
         self.data = ""
         self._Name = name
@@ -20,7 +19,7 @@ class SimpleTest:
     def Name(self):
         return self._Name
 
-    def test(self):
+    def run(self):
         self._Size = 42
         self._Value = random()
         if random() < 0.1:

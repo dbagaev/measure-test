@@ -1,5 +1,5 @@
-from pyxperiment.experiment import Experiment
-from pyxperiment.registry import Registry
+from pyxperiment.experiment import Experiment, Registry
+# from pyxperiment.registry import Registry
 from pyxperiment.metric import Metric
 from pyxperiment.runner import Runner
 

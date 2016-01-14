@@ -2,14 +2,13 @@ from .metric import Metric
 
 class MetricAccumulator:
     def __init__(self, metric) :
-        self._Type = metric.Type
         self._Name = metric.Name
+        self._Metric = metric
         self._Metrics = []
 
-    def add(self, metric) :
-        if metric._Type != self._Type :
-            return
-        self._Metrics.append(metric)
+    def add(self, exp) :
+        # TODO : Check if exp has this metric as member
+        self._Metrics.append(exp)
 
     @property
     def Type(self) :
@@ -30,7 +29,7 @@ class Average(MetricAccumulator) :
 
         value = 0
         for m in self._Metrics :
-            value = value + m()
+            value = value + self._Metric(m)
 
         return value / len(self._Metrics)
 
@@ -42,6 +41,6 @@ class Sum(MetricAccumulator) :
     def __call__(self):
         value = 0
         for m in self._Metrics :
-            value = value + m()
+            value = value + self._Metric(m)
 
         return value
