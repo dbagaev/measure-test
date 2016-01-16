@@ -40,13 +40,14 @@ class Metric :
 
     def __call__(self, obj = None) :
         if obj is not None :
-            if self._func is None:
+            if self._func is None and callable(obj):
                 self._func = obj
                 if self._Name is None :
                     self._Name = obj.__name__
                 print("registered attribute %s" % self._Name)
                 if self.__name__ is None :
                     self.__name__ = obj.__name__
+
                 if isinstance(obj, Metric) :
                     self._ChildMetrics.append(obj)
                     if self._Type == Metric.TYPE_UNKNOWN :
@@ -91,7 +92,6 @@ class MetricSet :
             if isinstance(mm[1], Metric) :
                 for m in mm[1].getChildMetrics() :
                     if filter(m) :
-                        m._Self = self._Experiment
                         self._Metrics[m.Name] = m
 
     def __len__(self) :

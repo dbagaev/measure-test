@@ -1,22 +1,48 @@
 from .experiment import Experiment, ExperimentSet
 import copy
 
-class RunnerResult:
-    def __init__(self):
+
+class MetricValue :
+    def __init__(self, metric, exp) :
+        self._Metric = metric
+        self._Experiment = exp
+
+    @property
+    def Name(self):
+        return self._Metric.Name
+
+    @property
+    def Type(self) :
+        return self._Metric.Type
+
+    @property
+    def Value(self) :
+        return self._Metric(self._Experiment)
+
+class RunnerResult :
+    def __init__(self) :
         self.SetResults = {}
         pass
+
 
 class RunnerExperimentSetResult:
     def __init__(self, set):
         self.ExperimentResults = {}
         self.ExperimentSet = set
-        self.Metrics = set.Metrics()
-        pass
+        self.Metrics = {}
+
+        for m in set.Metrics() :
+            self.Metrics[m[0]] = MetricValue(m[1], set)
+
 
 class RunnerExperimentResult:
     def __init__(self, experiment):
         self.Experiment = experiment
-        self.Metrics = experiment.Metrics
+        self.Metrics = {}
+
+        for m in experiment.Metrics :
+            self.Metrics[m[0]] = MetricValue(m[1], experiment)
+
 
 class Runner:
     def __init__(self):

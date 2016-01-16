@@ -26,7 +26,7 @@ class SimpleTest(Experiment):
         else:
             self._Is = True
         self._Message = "Hey from test " + self.Name
-        print("SimpleTest.test()")
+        print("Running test: SimpleTest")
 
     @classmethod
     def findTests(cls):
@@ -42,6 +42,7 @@ class SimpleTest(Experiment):
     def Value(self):
         return self._Value
 
+    @Metric(name="Succeded", accumulator=accumulator.Average, type=Metric.TYPE_FLOAT)
     @Metric(type=Metric.TYPE_BOOLEAN)
     def Is(self):
         return self._Is
