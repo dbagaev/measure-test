@@ -6,18 +6,17 @@ from pyxperiment.metric import Metric
 from pyxperiment import accumulator
 
 class SimpleTest(Experiment):
-    def __init__(self, name = ""):
+    def __init__(self, name = "") :
         self.data = ""
-        self._Name = name
 
+        self._Name = name
         self._Size = 0
         self._Value = 0.1
         self._Is = True
         self._Message = ""
 
-    @property
-    def Name(self):
-        return self._Name
+        super(SimpleTest, self).__init__(self)
+
 
     def run(self):
         self._Size = 42

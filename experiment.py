@@ -1,10 +1,12 @@
-from .metric import Metric
+from .metric import Metric, MetricSet
 
 import inspect
 
 
 class ExperimentSet:
-
+    '''
+    Experiment set holds information about experiments of the same type.
+    '''
     def __init__(self, exp):
 
         self._ExperimentClass = exp
@@ -122,22 +124,18 @@ class Experiment(metaclass=ExperimentRegistrator) :
         if obj is not None :
             self._Class = obj.__class__
             self._Test = obj
-
-            for mm in inspect.getmembers(obj) :
-                if isinstance(mm[1], Metric) :
-                    for m in mm[1].getChildMetrics() :
-                        m._Self = obj
-
             self._Name = obj.Name
+            self._Metrics = MetricSet(self, MetricSet.INCLUDE_NON_ACCUMULATORS)
+
         else :
             raise Exception("Passing empty object to Experiment")
 
     @property
     def Name(self):
         if self._Test is not None :
-            return self._Test.Name
+            return self._Test._Name
         else :
-            return None
+            return ""
 
     def findTests(self) :
         print("Getting test list for " + self.testType())
@@ -151,12 +149,9 @@ class Experiment(metaclass=ExperimentRegistrator) :
     def testType(self) :
         return self._Class.__name__
 
-    def Metrics(self, filter = True) :
-        for mm in inspect.getmembers(self.__class__) :
-            if isinstance(mm[1], Metric) :
-                for m in mm[1].getChildMetrics() :
-                    if not filter or m._Accumulator is None :
-                        yield (m.Name, m)
+    @property
+    def Metrics(self) :
+        return self._Metrics
 
     def run(self) :
         pass

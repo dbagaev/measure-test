@@ -16,7 +16,7 @@ class RunnerExperimentSetResult:
 class RunnerExperimentResult:
     def __init__(self, experiment):
         self.Experiment = experiment
-        self.Metrics = experiment.Metrics()
+        self.Metrics = experiment.Metrics
 
 class Runner:
     def __init__(self):
@@ -29,22 +29,14 @@ class Runner:
             self._addExperimentSet(experiment)
         else :
             return
-        exp_cls = experiment.__class__
-        #e = Registry._ExperimentSets
-        #for e in Registry():
-        #    if e[0] == exp_cls :
-        #        e = e[1]
-        #        if e in self._ExperimentSets.keys():
-        #            self._ExperimentSets[e].append(experiment)
-        #        else:
-        #            self._ExperimentSets[e] = [experiment]
 
     def _addExperiment(self, experiment):
         pass
 
     def _addExperimentSet(self, set):
-        if not set in self._ExperimentSets :
-            self._ExperimentSets[set.Name] = copy.copy(set)
+        if not set.Name in self._ExperimentSets :
+            exp_set = copy.copy(set)
+            self._ExperimentSets[set.Name] = exp_set
 
     def run(self):
 

@@ -1,3 +1,4 @@
+import inspect
 
 class Metric :
     """Metric is any output value of the experiment.
@@ -69,4 +70,39 @@ class Metric :
     @property
     def Type(self):
         return self._Type
+
+
+class MetricSet :
+
+    # Some filters
+    INCLUDE_NONE = lambda m : False
+    INCLUDE_ALL = lambda m : True
+    INCLUDE_ACCUMULATORS = lambda m : m._Accumulator is not None
+    INCLUDE_NON_ACCUMULATORS = lambda m : m._Accumulator is None
+
+    def __init__(self, experiment, filter = INCLUDE_NONE):
+        self._Experiment = experiment
+        self._Metrics = {}
+        self._loadMetrics(filter)
+
+    def _loadMetrics(self, filter) :
+        self._Metrics.clear()
+        for mm in inspect.getmembers(self._Experiment) :
+            if isinstance(mm[1], Metric) :
+                for m in mm[1].getChildMetrics() :
+                    if filter(m) :
+                        m._Self = self._Experiment
+                        self._Metrics[m.Name] = m
+
+    def __len__(self) :
+        return len(self._Metrics)
+
+    def __iter__(self) :
+        return iter(self._Metrics.items())
+
+    def __getattr__(self, item) :
+        return self._Metrics[item](self._Experiment)
+
+    def __getitem__(self, item) :
+        return self._Metrics[item](self._Experiment)
 
