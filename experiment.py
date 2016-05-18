@@ -122,9 +122,8 @@ class ExperimentRegistrator(type) :
 class Experiment(metaclass=ExperimentRegistrator) :
     def __init__(self, obj) :
         if obj is not None :
-            self._Class = obj.__class__
-            self._Test = obj
-            self._Name = obj.Name
+            self._Class = self.__class__
+            self._Test = self
             self._Metrics = MetricSet(self, MetricSet.INCLUDE_NON_ACCUMULATORS)
 
         else :
